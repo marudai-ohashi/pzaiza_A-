@@ -14,21 +14,23 @@ namespace 陣取りゲーム
             b.Create_masu(height, width);
 
             int flag = 1;
+            int num = -1;
+            b.SetZero();
             while (flag>0)
             {
                 flag = 0;
+                num++;
                 for(int i = 0; i < height; i++)
                 {
                     for(int j = 0; j < width; j++)
                     {
-                        if (b.GetC(i, j) == '*')
+                        if (b.GetC(i, j) == num.ToString()[0])
                         {
-                            if (b.Mark(i, j)) flag++;
+                            if (b.MarkNum(i, j)) flag++;
                         }
                     }
                 }
             }
-            Console.WriteLine(flag);
             b.Draw();
         }
     }
@@ -42,6 +44,48 @@ namespace 陣取りゲーム
         public char GetC(int y,int x)
         {
             return ban[y, x];
+        }
+
+        public void SetZero()
+        {
+            for(int i = 0; i < height; i++)
+            {
+                for(int j = 0; j < width; j++)
+                {
+                    if (ban[i, j] == '*') ban[i, j] = '0';
+                }
+            }
+        }
+
+
+        public bool MarkNum(int y,int x)
+        {
+            int num = int.Parse(ban[y, x].ToString());
+            num++;
+            int flag = 0;
+
+            if (x < width - 1 && ban[y, x + 1] == '.')
+            {
+                ban[y, x + 1] = num.ToString()[0];
+                flag++;
+            }
+            if (x > 0 && ban[y, x - 1] == '.')
+            {
+                ban[y, x - 1] = num.ToString()[0];
+                flag++;
+            }
+            if (y > 0 && ban[y - 1, x] == '.')
+            {
+                ban[y - 1, x] = num.ToString()[0];
+                flag++;
+            }
+            if (y < height - 1 && ban[y + 1, x] == '.')
+            {
+                ban[y + 1, x] = num.ToString()[0];
+                flag++;
+            }
+            if (flag > 0) return true;
+            else return false;
         }
 
         public bool Mark(int y,int x)
