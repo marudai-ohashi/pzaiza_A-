@@ -11,23 +11,26 @@ namespace 陣取りゲーム
             string[] str = Console.ReadLine().Split(' ');
             int height = int.Parse(str[0]);
             int width = int.Parse(str[1]);
-
-            int num;
+            b.Create_masu(height, width);
             string start = Console.ReadLine();
-            if (start == "A") num = 0;
-            else num = 1;
+            b.Set_masu();
 
-            b.Create_masu(height, width, start);
-
-            bool flag;
-            do
+            int ck = 1;
+            while (ck > 0)
             {
-                flag = b.SetNum(num++);
-                if (flag || b.SetNum(num++)) flag = true;
-                else flag = false;
-                //b.DrawNum();
-            } while (flag);
+                ck = 0;
+                if (start == "A")
+                {
+                    ck = b.Mark_Set("A");
+                    ck += b.Mark_Set("B");
+                }
+                else
+                {
+                    ck = b.Mark_Set("B");
+                    ck += b.Mark_Set("A");
 
+                }
+            }
             int anum = b.GetA();
             int bnum = b.GetB();
             Console.WriteLine(anum + " " + bnum);
@@ -38,26 +41,23 @@ namespace 陣取りゲーム
 
     class Ban
     {
-        public int[,] banNum;
+        public char[,] ban;
         public int height;
         public int width;
 
-        public List<(int, int)> a_list = new List<(int, int)>();
-        public List<(int, int)> b_list = new List<(int, int)>();
-
-        public int GetNum(int y,int x)
-        {
-            return banNum[y, x];
-        }
+        public List<int> a_set_x = new List<int>();
+        public List<int> a_set_y = new List<int>();
+        public List<int> b_set_x = new List<int>();
+        public List<int> b_set_y = new List<int>();
 
         public int GetA()
         {
             int num = 0;
-            for(int i = 0; i < height; i++)
+            for (int i = 0; i < height; i++)
             {
-                for(int j = 0; j < width; j++)
+                for (int j = 0; j < width; j++)
                 {
-                    if (banNum[i, j] % 2 == 0) num++;
+                    if (ban[i, j] == 'A') num++;
                 }
             }
             return num;
@@ -70,163 +70,111 @@ namespace 陣取りゲーム
             {
                 for (int j = 0; j < width; j++)
                 {
-                    if (banNum[i, j] % 2 == 1) num++;
+                    if (ban[i, j] == 'B') num++;
                 }
             }
             return num;
         }
 
 
-        public bool MarkNum(int y,int x)
+        public int Mark_Set(string mark)
         {
-            int num = banNum[y, x];
-            num += 2;
-            int flag = 0;
+            List<int> lst_x = new List<int>();
+            List<int> lst_y = new List<int>();
+            List<int> temp_x = new List<int>();
+            List<int> temp_y = new List<int>();
+            int ck = 0;
 
-            if (x < width - 1 && banNum[y, x + 1] == -1)
+            if (mark == "A")
             {
-                banNum[y, x + 1] = num;
-                flag++;
-            }
-            if (x > 0 && banNum[y, x - 1] == -1)
-            {
-                banNum[y, x - 1] = num;
-                flag++;
-            }
-            if (y > 0 && banNum[y - 1, x] == -1)
-            {
-                banNum[y - 1, x] = num;
-                flag++;
-            }
-            if (y < height - 1 && banNum[y + 1, x] == -1)
-            {
-                banNum[y + 1, x] = num;
-                flag++;
-            }
-            if (flag > 0) return true;
-            else return false;
-        }
-
-        public bool SetNum(int num)
-        {
-            int flag = 0;
-            if (num % 2 == 0)
-            {
-                for(int i=0;i<a_list.Count;i++)
-                {
-                    (int y,int x) = a_list[i];
-                    
-                    if (banNum[y, x] == num)
-                    {
-                        if (x < width - 1 && banNum[y, x + 1] == -1)
-                        {
-                            banNum[y, x + 1] = num + 2;
-                            flag++;
-                            a_list.Add((y, x + 1));
-                        }
-                        if (x > 0 && banNum[y, x - 1] == -1)
-                        {
-                            banNum[y, x - 1] = num + 2;
-                            flag++;
-                            a_list.Add((y, x - 1));
-                        }
-                        if (y > 0 && banNum[y - 1, x] == -1)
-                        {
-                            banNum[y - 1, x] = num + 2;
-                            flag++;
-                            a_list.Add((y - 1, x));
-                        }
-                        if (y < height - 1 && banNum[y + 1, x] == -1)
-                        {
-                            banNum[y + 1, x] = num + 2;
-                            flag++;
-                            a_list.Add((y + 1, x));
-                        }
-                    }
-                }
+                foreach (var i in a_set_x) temp_x.Add(i);
+                foreach (var i in a_set_y) temp_y.Add(i);
+                a_set_x.Clear();
+                a_set_y.Clear();
             }
             else
             {
-                for(int i=0;i<b_list.Count;i++)
+                foreach (var i in b_set_x) temp_x.Add(i);
+                foreach (var i in b_set_y) temp_y.Add(i);
+                b_set_x.Clear();
+                b_set_y.Clear();
+            }
+
+            for (int i = 0; i < temp_x.Count; i++)
+            {
+                int x = temp_x[i];
+                int y = temp_y[i];
+
+                if (x < width - 1 && ban[y, x + 1] == '.')
                 {
-                    (int y, int x) = b_list[i];
-                    if (banNum[y, x] == num)
-                    {
-                        if (x < width - 1 && banNum[y, x + 1] == -1)
-                        {
-                            banNum[y, x + 1] = num + 2;
-                            flag++;
-                            b_list.Add((y, x + 1));
-                        }
-                        if (x > 0 && banNum[y, x - 1] == -1)
-                        {
-                            banNum[y, x - 1] = num + 2;
-                            flag++;
-                            b_list.Add((y, x - 1));
-                        }
-                        if (y > 0 && banNum[y - 1, x] == -1)
-                        {
-                            banNum[y - 1, x] = num + 2;
-                            flag++;
-                            b_list.Add((y - 1, x));
-                        }
-                        if (y < height - 1 && banNum[y + 1, x] == -1)
-                        {
-                            banNum[y + 1, x] = num + 2;
-                            flag++;
-                            b_list.Add((y + 1, x));
-                        }
-                    }
+                    ban[y, x + 1] = mark[0];
+                    lst_x.Add(x + 1);
+                    lst_y.Add(y);
+                    ck++;
+                }
+                if (x > 0 && ban[y, x - 1] == '.')
+                {
+                    ban[y, x - 1] = mark[0];
+                    lst_x.Add(x - 1);
+                    lst_y.Add(y);
+                    ck++;
+                }
+                if (y > 0 && ban[y - 1, x] == '.')
+                {
+                    ban[y - 1, x] = mark[0];
+                    lst_x.Add(x);
+                    lst_y.Add(y - 1);
+                    ck++;
+                }
+                if (y < height - 1 && ban[y + 1, x] == '.')
+                {
+                    ban[y + 1, x] = mark[0];
+                    lst_x.Add(x);
+                    lst_y.Add(y + 1);
+                    ck++;
                 }
             }
-            if (flag > 0) return true;
-            else return false;
+
+            if (mark == "A")
+            {
+                foreach (var i in lst_x) a_set_x.Add(i);
+                foreach (var i in lst_y) a_set_y.Add(i);
+            }
+            else
+            {
+                foreach (var i in lst_x) b_set_x.Add(i);
+                foreach (var i in lst_y) b_set_y.Add(i);
+            }
+            return ck;
         }
 
-        public void Create_masu(int y, int x, string start)
+        public void Create_masu(int y, int x)
         {
             height = y;
             width = x;
-            banNum = new int[height, width];
+            ban = new char[height, width];
+        }
+
+        public void Set_masu()
+        {
             for (int i = 0; i < height; i++)
             {
                 string str = Console.ReadLine();
                 for (int j = 0; j < width; j++)
                 {
-                    if (str[j] == '.') banNum[i, j] = -1;
-                    else if (str[j] == '#') banNum[i, j] = -99;
-                    else if (str[j] == 'B')
+                    if (str[j] == 'B')
                     {
-                        banNum[i, j] = 1;
-                        b_list.Add((i, j));
+                        b_set_x.Add(j);
+                        b_set_y.Add(i);
                     }
-                    else if (str[j] == 'A' && start == "A")
+                    else if (str[j] == 'A')
                     {
-                        banNum[i, j] = 0;
-                        a_list.Add((i, j));
+                        a_set_x.Add(j);
+                        a_set_y.Add(i);
                     }
-                    else if (str[j] == 'A' && start == "B")
-                    {
-                        banNum[i, j] = 2;
-                        a_list.Add((i, j));
-                    }
+                    ban[i, j] = str[j];
                 }
             }
-        }
-
-
-
-        public void DrawNum()
-        {
-            for (int i = 0; i < height; i++)
-            {
-                for (int j = 0; j < width; j++)
-                {
-                    Console.Write(banNum[i, j]+" ");
-                }
-                Console.WriteLine();
-            }
-
         }
     }
 }
