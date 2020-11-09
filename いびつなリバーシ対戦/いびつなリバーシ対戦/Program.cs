@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic.CompilerServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace いびつなリバーシ対戦
@@ -15,7 +14,7 @@ namespace いびつなリバーシ対戦
             int x = int.Parse(str[3]);
 
             Ban ban = new Ban();
-            ban.Create_No_masu(height, width);
+            ban.Create_masu(height, width);
 
             ban.Mark_Diagonal(y, x);
             ban.Draw_masu();
@@ -110,16 +109,38 @@ namespace いびつなリバーシ対戦
 
         public void Mark_Diagonal(int y, int x)
         {
-            ban[y, x] = '!';
-            for (int i = 1; i < height-y; i++)
+            ban[y, x] = '*';
+            for (int i = 1; i < height - y; i++)
             {
-                if (x - i >= 0) ban[y + i, x - i] = '*';
-                if (x + i < width) ban[y + i, x + i] = '*';
+                if (x - i >= 0 && ban[y + i, x - i] == '*')
+                {
+                    for (int j = 1; j <= i; j++) ban[y + j, x - j] = '*';
+                    break;
+                }
+            }
+            for (int i = 1; i < height - y; i++)
+            {
+                if (x + i < width && ban[y + i, x + i] == '*')
+                {
+                    for (int j = 1; j <= i; j++) ban[y + j, x + j] = '*';
+                    break;
+                }
             }
             for (int i = 1; i <= y; i++)
             {
-                if (x - i >= 0) ban[y - i, x - i] = '*';
-                if (x + i < width) ban[y - i, x + i] = '*';
+                if (x - i >= 0 && ban[y - i, x - i] == '*')
+                {
+                    for (int j = 1; j <= i; j++) ban[y - j, x - j] = '*';
+                    break;
+                }
+            }
+            for (int i = 1; i <= y; i++)
+            {
+                if (x + i < width && ban[y - i, x + i] == '*')
+                {
+                    for (int j = 1; j <= i; j++) ban[y - j, x + j] = '*';
+                    break;
+                }
             }
         }
     }
