@@ -10,14 +10,14 @@ namespace いびつなリバーシ対戦
             string[] str = Console.ReadLine().Split(' ');
             int height = int.Parse(str[0]);
             int width = int.Parse(str[1]);
-            int y = int.Parse(str[2]);
-            int x = int.Parse(str[3]);
+//            int y = int.Parse(str[2]);
+//            int x = int.Parse(str[3]);
 
             Ban ban = new Ban();
             ban.Create_masu(height, width);
 
-            ban.Mrak_Cross(y, x);
-            ban.Mark_Diagonal(y, x);
+            ban.Mrak_Cross();
+            ban.Mark_Diagonal();
             ban.Draw_masu();
         }
     }
@@ -26,6 +26,8 @@ namespace いびつなリバーシ対戦
         public char[,] ban;
         public int height;
         public int width;
+        public int px;
+        public int py;
 
         public void Create_masu(int y, int x)
         {
@@ -40,6 +42,12 @@ namespace いびつなリバーシ対戦
                 for (int j = 0; j < width; j++)
                 {
                     ban[i, j] = str[j];
+                    if (ban[i, j] == '!')
+                    {
+                        px = j;
+                        py = i;
+                        ban[i, j] = '*';
+                    }
                 }
             }
         }
@@ -70,9 +78,10 @@ namespace いびつなリバーシ対戦
             }
         }
 
-        public void Mrak_Cross(int y, int x)
+        public void Mrak_Cross()
         {
-            ban[y, x] = '*';
+            int x = px;
+            int y = py;
 
             for (int i = y + 1; i < height; i++)
             {
@@ -81,6 +90,7 @@ namespace いびつなリバーシ対戦
                     for (int j = y + 1; j <= i; j++) ban[j, x] = '*';
                     break;
                 }
+                else if (ban[i, x] == '#') break;
             }
             for (int i = y - 1; i >= 0; i--)
             {
@@ -89,6 +99,7 @@ namespace いびつなリバーシ対戦
                     for (int j = y - 1; j >= i; j--) ban[j, x] = '*';
                     break;
                 }
+                else if (ban[i, x] == '#') break;
             }
             for (int i = x + 1; i < width; i++)
             {
@@ -97,6 +108,7 @@ namespace いびつなリバーシ対戦
                     for (int j = x + 1; j <= i; j++) ban[y, j] = '*';
                     break;
                 }
+                else if (ban[y, i] == '#') break;
             }
             for (int i = x - 1; i >= 0; i--)
             {
@@ -105,42 +117,61 @@ namespace いびつなリバーシ対戦
                     for (int j = x - 1; j >= i; j--) ban[y, j] = '*';
                     break;
                 }
+                else if (ban[y, i] == '#') break;
             }
         }
 
-        public void Mark_Diagonal(int y, int x)
+        public void Mark_Diagonal()
         {
-//            ban[y, x] = '*';
+            //            ban[y, x] = '*';
+            int x = px;
+            int y = py;
             for (int i = 1; i < height - y; i++)
             {
-                if (x - i >= 0 && ban[y + i, x - i] == '*')
+                if (x - i >= 0)
                 {
-                    for (int j = 1; j <= i; j++) ban[y + j, x - j] = '*';
-                    break;
+                    if (ban[y + i, x - i] == '*')
+                    {
+                        for (int j = 1; j <= i; j++) ban[y + j, x - j] = '*';
+                        break;
+                    }
+                    else if (ban[y + i, x - i] == '#') break;
                 }
             }
             for (int i = 1; i < height - y; i++)
             {
-                if (x + i < width && ban[y + i, x + i] == '*')
+                if (x + i < width)
                 {
-                    for (int j = 1; j <= i; j++) ban[y + j, x + j] = '*';
-                    break;
+                    if (ban[y + i, x + i] == '*')
+                    {
+                        for (int j = 1; j <= i; j++) ban[y + j, x + j] = '*';
+                        break;
+                    }
+                    else if (ban[y + i, x + i] == '#') break;
                 }
             }
             for (int i = 1; i <= y; i++)
             {
-                if (x - i >= 0 && ban[y - i, x - i] == '*')
+                if (x - i >= 0)
                 {
-                    for (int j = 1; j <= i; j++) ban[y - j, x - j] = '*';
-                    break;
+                    if (ban[y - i, x - i] == '*')
+                    {
+                        for (int j = 1; j <= i; j++) ban[y - j, x - j] = '*';
+                        break;
+                    }
+                    else if (ban[y - i, x - i] == '#') break;
                 }
             }
             for (int i = 1; i <= y; i++)
             {
-                if (x + i < width && ban[y - i, x + i] == '*')
+                if (x + i < width)
                 {
-                    for (int j = 1; j <= i; j++) ban[y - j, x + j] = '*';
-                    break;
+                    if( ban[y - i, x + i] == '*')
+                    {
+                        for (int j = 1; j <= i; j++) ban[y - j, x + j] = '*';
+                        break;
+                    }
+                    else if (ban[y - i, x + i] == '#') break;
                 }
             }
         }
