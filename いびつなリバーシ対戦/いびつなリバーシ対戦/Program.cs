@@ -10,14 +10,18 @@ namespace いびつなリバーシ対戦
             string[] str = Console.ReadLine().Split(' ');
             int height = int.Parse(str[0]);
             int width = int.Parse(str[1]);
-//            int y = int.Parse(str[2]);
-//            int x = int.Parse(str[3]);
+            int num = int.Parse(str[2]);
 
             Ban ban = new Ban();
             ban.Create_masu(height, width);
-
-            ban.Mrak_Cross();
-            ban.Mark_Diagonal();
+            for (int i = 0; i < num; i++)
+            {
+                str = Console.ReadLine().Split(' ');
+                int y = int.Parse(str[0]);
+                int x = int.Parse(str[1]);
+                ban.Mrak_Cross(y, x);
+                ban.Mark_Diagonal(y, x);
+            }
             ban.Draw_masu();
         }
     }
@@ -42,12 +46,6 @@ namespace いびつなリバーシ対戦
                 for (int j = 0; j < width; j++)
                 {
                     ban[i, j] = str[j];
-                    if (ban[i, j] == '!')
-                    {
-                        px = j;
-                        py = i;
-                        ban[i, j] = '*';
-                    }
                 }
             }
         }
@@ -78,10 +76,9 @@ namespace いびつなリバーシ対戦
             }
         }
 
-        public void Mrak_Cross()
+        public void Mrak_Cross(int y,int x)
         {
-            int x = px;
-            int y = py;
+            ban[y, x] = '*';
 
             for (int i = y + 1; i < height; i++)
             {
@@ -121,11 +118,8 @@ namespace いびつなリバーシ対戦
             }
         }
 
-        public void Mark_Diagonal()
+        public void Mark_Diagonal(int y,int x)
         {
-            //            ban[y, x] = '*';
-            int x = px;
-            int y = py;
             for (int i = 1; i < height - y; i++)
             {
                 if (x - i >= 0)
