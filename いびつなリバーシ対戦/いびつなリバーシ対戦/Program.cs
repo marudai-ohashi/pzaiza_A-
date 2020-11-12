@@ -11,22 +11,19 @@ namespace いびつなリバーシ対戦
             int height = int.Parse(str[0]);
             int width = int.Parse(str[1]);
             int num = int.Parse(str[2]);
+            int turn = int.Parse(str[3]);
             int x, y;
 
             Ban ban = new Ban();
             ban.Create_masu(height, width);
-            for (int i = 0; i < num; i++)
+            for (int i = 0; i < turn; i++)
             {
                 str = Console.ReadLine().Split(' ');
-                y = int.Parse(str[0]);
-                x = int.Parse(str[1]);
-                ban.Mrak_Cross(y, x, 'A');
-                ban.Mark_Diagonal(y, x, 'A');
-                str = Console.ReadLine().Split(' ');
-                y = int.Parse(str[0]);
-                x = int.Parse(str[1]);
-                ban.Mrak_Cross(y, x, 'B');
-                ban.Mark_Diagonal(y, x, 'B');
+                char ch = str[0][0];
+                y = int.Parse(str[1]);
+                x = int.Parse(str[2]);
+                ban.Mrak_Cross(y, x, ch);
+                ban.Mark_Diagonal(y, x, ch);
             }
             ban.Draw_masu();
         }
